@@ -27,4 +27,18 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
         aws-region: us-east-1  # Replace with your AWS region
-    - run: aws s3 cp target/devops-demo-1.0-SNAPSHOT.jar s3://pantelis-devops-demo-bucket/devops-demo.jar #Replace your bucket name
+    - run: aws s3 cp target/devops-demo-1.0-SNAPSHOT.jar s3://pantelis-devops-demo-bucket/devops-demo.jar
+    
+    - name: Deploy to Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
+        application_name: pantelapp
+        environment_name: Pantelapp-env
+        version_label: ${{ github.sha }}
+        region: us-east-1
+        deployment_package: target/devops-demo-1.0-SNAPSHOT.jar
+        existing_bucket_name: pantelis-devops-demo-bucket
+        s3_key: devops-demo.jar
